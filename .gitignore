@@ -7,4 +7,5 @@ arty.sim/
 arty.srcs/
 *.jou
 *.log
+*.str
 .Xil/
