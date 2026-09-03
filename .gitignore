@@ -1,0 +1,10 @@
+arty.xpr
+arty.cache/
+arty.hw/
+arty.ip_user_files/
+arty.runs/
+arty.sim/
+arty.srcs/
+*.jou
+*.log
+.Xil/
