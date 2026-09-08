@@ -1,3 +1,5 @@
+preferred_case = "lower"
+
 [libraries]
 arty.files = [
 	'src/*.vhd',
