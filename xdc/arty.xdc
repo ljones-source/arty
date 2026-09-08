@@ -119,8 +119,8 @@ set_property -dict {PACKAGE_PIN A3 IOSTANDARD LVCMOS33} [get_ports {vaux14_n}] ;
 #set_property -dict {PACKAGE_PIN A3 IOSTANDARD LVCMOS33} [get_ports {ck_a11}]; # A11
 
 # USB-UART Interface
-set_property -dict {PACKAGE_PIN D10 IOSTANDARD LVCMOS33} [get_ports {uart_rxd_out}];
-set_property -dict {PACKAGE_PIN A9  IOSTANDARD LVCMOS33} [get_ports {uart_txd_in}];
+set_property -dict {PACKAGE_PIN D10 IOSTANDARD LVCMOS33} [get_ports {uart_tx}];
+set_property -dict {PACKAGE_PIN A9  IOSTANDARD LVCMOS33} [get_ports {uart_rx}];
 
 # Shield Outer Digital Header
 set_property -dict {PACKAGE_PIN V15 IOSTANDARD LVCMOS33} [get_ports {ck_io0}];

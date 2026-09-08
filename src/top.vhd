@@ -11,7 +11,8 @@ entity top is
 		led   : out std_logic_vector(3 downto 0);
 		led_r : out std_logic_vector(3 downto 0);
 		led_g : out std_logic_vector(3 downto 0);
-		led_b : out std_logic_vector(3 downto 0));
+		led_b : out std_logic_vector(3 downto 0);
+		uart_tx : out std_logic);
 end top;
 
 architecture rtl of top is
@@ -21,6 +22,11 @@ architecture rtl of top is
 	signal duty_r  : u8_array(0 to 3);
 	signal duty_g  : u8_array(0 to 3);
 	signal duty_b  : u8_array(0 to 3);
+	constant MSG    : string                  := "Hello" & CR & LF;
+	signal msg_idx  : integer range MSG'range := MSG'low;
+	signal tx_char  : std_logic_vector(7 downto 0);
+	signal tx_valid : std_logic               := '0';
+	signal tx_ready : std_logic;
 begin
 	clock : process(clk) is
 		constant CLK_FRQ_HZ : natural := 100_000_000;
@@ -76,4 +82,34 @@ begin
 			pwm_out => led_b(n)
 		);
 	end generate;
+
+	uart_tx_inst : entity work.uart_tx
+	port map(
+		clk => clk,
+		data => tx_char,
+		valid => tx_valid,
+		ready => tx_ready,
+		uart_tx => uart_tx
+	);
+
+	tx_char <= std_logic_vector(to_unsigned(character'pos(MSG(msg_idx)), 8));
+
+	send_msg : process(clk) is
+	begin
+		if (rising_edge(clk)) then
+			if (tx_valid = '0') then
+				if (counter = 0) then
+					tx_valid <= '1';
+				end if;
+			elsif (tx_ready = '1') then
+				if (msg_idx = MSG'high) then
+					msg_idx  <= MSG'low;
+					tx_valid <= '0';
+				else
+					msg_idx <= msg_idx + 1;
+				end if;
+			end if;
+		end if;
+	end process;
+
 end;

@@ -1,32 +1,26 @@
 #!/usr/bin/env -S vivado -mode batch -source
 
-set projname arty
-set part xc7a35ticsg324-1L
+set d [file normalize [file dirname [info script]]]
 
-set cp_args [list $projname $projname -part $part]
-if {[lsearch $argv "-force"] >= 0} {
-    lappend cp_args -force
-}
-create_project {*}$cp_args
+create_project arty $d -part xc7a35ticsg324-1L -force
 set_property target_language VHDL [current_project]
 
-# Sources
-add_files -fileset sources_1 [list			\
-	[file normalize "src/pwm.vhd"]			\
-	[file normalize "src/top.vhd"]			\
+add_files -fileset sources_1 [list \
+	$d/src/pwm.vhd \
+	$d/src/top.vhd \
+	$d/src/uart_tx.vhd \
+]
+add_files -fileset sim_1 [list \
+	$d/src/uart_tx_tb.vhd \
+]
+add_files -fileset constrs_1 [list \
+	$d/xdc/arty.xdc \
 ]
 
-# Everything VHDL is VHDL-2008
-set_property file_type "VHDL 2008" -objects [get_files -of_objects [get_filesets sources_1] [list \
-	"*.vhd"							\
-]]
+set_property file_type "VHDL 2008" -objects [get_files *.vhd]
 
-# Constraints
-add_files -fileset constrs_1 [list			\
-	[file normalize "xdc/arty.xdc"]		\
-]
+set_property top top [get_filesets sources_1]
+set_property top uart_tx_tb [get_filesets sim_1]
+set_property top_lib xil_defaultlib [get_filesets sim_1]
 
-# cmd name value [var to eval] 
-set_property top top [current_fileset]
-# set_property top arty_top [current_fileset]
-
+set_property -name xsim.simulate.runtime -value 50ms -objects [get_filesets sim_1]
