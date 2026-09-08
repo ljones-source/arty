@@ -1,0 +1,16 @@
+[libraries]
+arty.files = [
+	'src/*.vhd',
+]
+
+unisim.files = [
+	'/opt/xilinx/2025.1/data/vhdl/src/unisims/unisim_VCOMP.vhd',
+	'/opt/xilinx/2025.1/data/vhdl/src/unisims/unisim_VPKG.vhd',
+]
+unisim.is_third_party = true
+
+xpm.files = [
+	'/opt/xilinx/2025.1/data/ip/xpm/xpm_VCOMP.vhd',
+]
+xpm.is_third_party = true
+
