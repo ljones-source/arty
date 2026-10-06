@@ -9,3 +9,5 @@ arty.srcs/
 *.log
 *.str
 .Xil/
+tools/.venv/
+tools/__pycache__/
