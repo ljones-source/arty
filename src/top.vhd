@@ -45,6 +45,10 @@ architecture rtl of top is
 	signal xadc_drdy  : std_logic;
 	signal xadc_eoc   : std_logic;
 	signal sample     : unsigned(11 downto 0) := (others => '0');
+	signal sample_valid : std_logic := '0';
+	signal cic_out    : unsigned(11 downto 0) := (others => '0');
+	signal cic_rdy    : std_logic := '0';
+	signal sending    : std_logic := '0';
 begin
 	clock : process(clk) is
 		constant CLK_FRQ_HZ : natural := 100_000_000;
@@ -101,11 +105,21 @@ begin
 		);
 	end generate;
 
+	cic_inst : entity work.cic
+	port map(
+		clk => clk,
+		en => sample_valid,
+		din => sample,
+		dout => cic_out,
+		rdy => cic_rdy
+	);
+
 	uart_tx_inst : entity work.uart_tx
+	generic map(baud_rate => 115200)
 	port map(
 		clk => clk,
 		data => tx_char,
-		valid => '1',           -- always a byte waiting; tx_ready paces us
+		valid => sending,
 		ready => tx_ready,
 		uart_tx => uart_tx
 	);
@@ -120,10 +134,15 @@ begin
 	send_frame : process(clk) is
 	begin
 		if (rising_edge(clk)) then
-			if (tx_ready = '1') then       -- uart_tx just took tx_char
-				if (frame_idx = 4) then
+			if (sending = '0') then
+				if (cic_rdy = '1') then
+					frame_val <= cic_out;
 					frame_idx <= 0;
-					frame_val <= sample;   -- latch once, so all 3 digits agree
+					sending <= '1';
+				end if;
+			elsif tx_ready = '1' then
+				if (frame_idx = 4) then
+					sending <= '0';
 				else
 					frame_idx <= frame_idx + 1;
 				end if;
@@ -168,11 +187,13 @@ begin
 	xadc_drp : process(clk) is
 	begin
 		if (rising_edge(clk)) then
-			xadc_den <= '0';               -- den must be a one-cycle strobe
+			xadc_den <= '0';
+			sample_valid <= '0';
 			if (xadc_eoc = '1') then
-				xadc_den <= '1';           -- new result in 0x14, go read it
+				xadc_den <= '1';
 			elsif (xadc_drdy = '1') then
 				sample <= unsigned(xadc_do(15 downto 4));
+				sample_valid <= '1';
 			end if;
 		end if;
 	end process;

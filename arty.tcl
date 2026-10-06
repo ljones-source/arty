@@ -9,9 +9,11 @@ add_files -fileset sources_1 [list \
 	$d/src/pwm.vhd \
 	$d/src/top.vhd \
 	$d/src/uart_tx.vhd \
+	$d/src/cic.vhd \
 ]
 add_files -fileset sim_1 [list \
 	$d/src/uart_tx_tb.vhd \
+	$d/src/cic_tb.vhd \
 ]
 add_files -fileset constrs_1 [list \
 	$d/xdc/arty.xdc \
@@ -20,7 +22,7 @@ add_files -fileset constrs_1 [list \
 set_property file_type "VHDL 2008" -objects [get_files *.vhd]
 
 set_property top top [get_filesets sources_1]
-set_property top uart_tx_tb [get_filesets sim_1]
+set_property top cic_tb [get_filesets sim_1]
 set_property top_lib xil_defaultlib [get_filesets sim_1]
 
 set_property -name xsim.simulate.runtime -value 50ms -objects [get_filesets sim_1]
