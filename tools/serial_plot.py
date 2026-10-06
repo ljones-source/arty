@@ -7,8 +7,8 @@ usage: serial_plot.py [port] [baud] [every]
 import sys, shutil, serial
 
 port  = sys.argv[1] if len(sys.argv) > 1 else "/dev/ttyUSB1"
-baud  = int(sys.argv[2]) if len(sys.argv) > 2 else 9600
-every = int(sys.argv[3]) if len(sys.argv) > 3 else 8
+baud  = int(sys.argv[2]) if len(sys.argv) > 2 else 115200
+every = int(sys.argv[3]) if len(sys.argv) > 3 else 1
 width = shutil.get_terminal_size().columns - 16
 
 with serial.Serial(port, baud, timeout=1) as s:

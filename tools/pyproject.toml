@@ -1,0 +1,14 @@
+[project]
+name = "arty-tools"
+version = "0.1.0"
+description = "Host-side helpers for the Arty XADC-over-UART design"
+requires-python = ">=3.10"
+dependencies = [
+    "pyserial>=3.5",
+    "matplotlib>=3.8",
+	"pyqt6",
+    "numpy>=1.26",
+]
+
+[tool.uv]
+package = false
